@@ -1,0 +1,6 @@
+.DS_store
+build/*
+.idea
+node_modules/*
+npm-debug.log
+demo.html

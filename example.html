@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<body>
+
+
+<script>
+	window.miintoSettings = {
+		affiliateId: 'myAwesomeId',
+		cartExpiration: 7,
+		baseUrl: 'http://www.miinto.dk'
+	};
+
+	window.miintoCartReady = function(myCart)
+	{
+		console.log('my cart is ready!', myCart);
+	};
+
+	(function(d, w, undefined)
+	{
+		var miintocart   = d.createElement('script');
+		miintocart.type  = 'text/javascript';
+		miintocart.async = true;
+		miintocart.src   = w.miintoSettings.baseUrl + '/static/scripts/cartjs/cart-bundle.js';
+		var s            = d.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(miintocart, s);
+	}(document, window));
+</script>
+
+
+</body>
+</html>

@@ -1,6 +1,7 @@
 # Miinto JS cart
+
 ## Usage
-The cart is loaded asynchronously with the snippet below. A `miintoSettings` object and `miintoCartReady` function must be declared on the window global, defining settings and "on ready" callback from the cart. To load the cart, place this snippet (preferably before the enclosing <body> tag)
+The cart is loaded asynchronously with the snippet below. A `miintoSettings` object and `miintoCartReady` function must be declared on the window global, defining settings and "onready" callback from the cart. To load the cart, place this snippet (preferably before the enclosing body tag)
 
 ```javascript
 <script type="text/javascript">
@@ -10,16 +11,16 @@ The cart is loaded asynchronously with the snippet below. A `miintoSettings` obj
         cartExpiration: 7,
         baseUrl: 'http://www.miinto.dk'
     };
-
-    (function(d)
-    {
-        var miintocart   = document.createElement('script');
-        miintocart.type  = 'text/javascript';
-        miintocart.async = true;
-        miintocart.src = window.miintoSettings.baseUrl + '/static/scripts/src/shoppingcart/build/cart-bundle.js';
-        var s          = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(miintocart, s);
-    }(document));
+    
+	(function(d, w, undefined)
+	{
+		var miintocart   = d.createElement('script');
+		miintocart.type  = 'text/javascript';
+		miintocart.async = true;
+		miintocart.src   = w.miintoSettings.baseUrl + '/static/scripts/cartjs/cart-bundle.js';
+		var s            = d.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(miintocart, s);
+	}(document, window));
 </script>
 ```
 
@@ -36,7 +37,7 @@ window.miintoCartReady = function(myCart)
 
 Asynchronous functions (add/remove) returns a Promise/A+ compliant promise.
 
-Examples:
+Example:
 ```javascript
 window.miintoCartReady = function(myCart)
 {
@@ -63,7 +64,17 @@ window.miintoCartReady = function(myCart)
   var subtotal = myCart.getSubtotal();
 
   // Getting checkout url
-  var checkoutUrl = myCart.getCheckoutUrl()(;)
+  var checkoutUrl = myCart.getCheckoutUrl();
 
 };
 ```
+
+
+## Compiling
+
+To bundle all dependencies (CommonJS modules through browserify) and transpile ES6 to ES5 install npm dependencies ```npm install``` and run ```gulp```
+
+
+## Known problems
+
+<=IE8 support not tested
