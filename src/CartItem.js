@@ -9,16 +9,19 @@ class CartItem {
 	constructor(productId, color, size, quantity)
 	{
 		this.productId = productId;
-		this.color    = color;
+		this.color     = color;
 		this.size      = size;
 		this.quantity  = quantity;
 
 		// These are being set from the response
-		this.ownerId   = 0;
-		this.unitPrice = 0;
-		this.photoUrl  = '';
-		this.remoteKey = 0;
-		this.remoteUrl = '';
+		this.title         = '';
+		this.ownerId       = 0;
+		this.unitPrice     = 0;
+		this.photoUrl      = '';
+		this.colorRGB      = '0,0,0';
+		this.largePhotoUrl = '';
+		this.remoteKey     = 0;
+		this.remoteUrl     = '';
 	}
 
 	/**
@@ -34,6 +37,8 @@ class CartItem {
 		this.photoUrl  = itemData.product_image;
 		this.remoteUrl = itemData.product_url;
 		this.quantity  = itemData.product_quantity;
+		this.colorRGB  = itemData.product_color_rgb;
+		this.title     = itemData.product_title;
 	}
 
 	/**
@@ -45,6 +50,11 @@ class CartItem {
 		return this.quantity * this.unitPrice;
 	}
 
+	getTitle()
+	{
+		return this.title;
+	}
+
 	getProductId()
 	{
 		return this.productId;
@@ -53,6 +63,11 @@ class CartItem {
 	getColor()
 	{
 		return this.color;
+	}
+
+	getColorRGB()
+	{
+		return this.colorRGB;
 	}
 
 	getSize()
@@ -83,6 +98,16 @@ class CartItem {
 	getPhotoUrl()
 	{
 		return this.photoUrl;
+	}
+
+	getLargePhotoUrl()
+	{
+		return this.largePhotoUrl;
+	}
+
+	getRemoteUrl()
+	{
+		return this.remoteUrl;
 	}
 
 }

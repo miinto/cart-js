@@ -1,10 +1,11 @@
+require("babelify/polyfill");
 const httpRequest   = require('axios');
 const cookieManager = require('js-cookie');
 const RemoteCart    = require('./RemoteCart');
 const Cart          = require('./Cart');
 const CartItem      = require('./CartItem');
 
-const settings   = window.miintoSettings;
+const settings = window.miintoSettings;
 
 // Handle token and cookie stuff
 const suffixForCookieName = settings.baseUrl.split('.').pop();
@@ -12,7 +13,7 @@ const tokenCookieKey      = 'miinto_affiliate_cart_' + suffixForCookieName.repla
 const token               = cookieManager.get(tokenCookieKey);
 
 // Base settings
-const baseUrl    = settings.baseUrl + '/actions/shoppingcart_remote.php?easter=egg';
+const baseUrl = settings.baseUrl + '/actions/shoppingcart_remote.php?easter=egg';
 //var baseUrl    = settings.baseUrl + '/actions/shoppingcart_remote.php?easter=egg&XDEBUG_SESSION_START=PHPSTORM';
 const checkoutUrl = settings.baseUrl + '/actions/shoppingcart_remote.php?method=getCheckoutRemoteCart';
 
@@ -26,7 +27,7 @@ remoteCart.getShoppingCart()
 
 			// Place token
 			let expiration = settings.cartExpiration || 7;
-			cookieManager.set(tokenCookieKey, cartData.cart.id, { expires: expiration });
+			cookieManager.set(tokenCookieKey, cartData.cart.id, {expires: expiration});
 
 			// Add ensure correct token on the remote cart
 			remoteCart.setToken(cartData.cart.id);
@@ -49,9 +50,9 @@ remoteCart.getShoppingCart()
 			throw new Error('miintoCartReady method not found!');
 		}
 	}).catch((err) =>
-	{
-		console.log('Getting cart failed', err);
-	});
+{
+	console.log('Getting cart failed', err);
+});
 
 
 

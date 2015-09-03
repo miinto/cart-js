@@ -54,7 +54,7 @@ class Cart {
 					item.mapItemDataFromResponse(itemData);
 
 					// Add item or adjust quantit if exists
-					let search = this.items.indexOf(item);
+					let search = this.findSimilarItem(item);
 					if (search !== -1) {
 						this.items[search].adjustQuantity(quantity);
 					} else {
@@ -64,10 +64,24 @@ class Cart {
 					resolve(item);
 
 				}).catch((errorMessage) =>
-				{
-					reject(errorMessage);
-				});
+			{
+				reject(errorMessage);
+			});
 		});
+	}
+
+	findSimilarItem(item)
+	{
+		let similarItem = -1;
+
+		for (let i = 0; i < this.items.length; i++) {
+			let currentItem = this.items[i];
+			if (currentItem.getProductId() == item.getProductId() && currentItem.getColor() == item.getColor() && currentItem.getSize() == item.getSize()) {
+				return i;
+			}
+		}
+
+		return similarItem;
 	}
 
 	/**
@@ -77,7 +91,7 @@ class Cart {
 	 */
 	removeItem(item)
 	{
-		let index = this.items.indexOf(item);
+		let index = this.findSimilarItem(item);
 		if (index === -1) {
 			throw new Error('Could not find the item!');
 		}
@@ -97,13 +111,13 @@ class Cart {
 					resolve(item);
 
 				}).catch((errorMessage) =>
-				{
-					reject(errorMessage);
-				});
+			{
+				reject(errorMessage);
+			});
 		});
 
 	}
-	
+
 	/**
 	 * Get checkout URL
 	 */
