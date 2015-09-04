@@ -20,8 +20,8 @@ class CartItem {
 		this.photoUrl      = '';
 		this.colorRGB      = '0,0,0';
 		this.largePhotoUrl = '';
-		this.remoteKey     = 0;
 		this.remoteUrl     = '';
+		this.hash          = '';
 	}
 
 	/**
@@ -31,7 +31,6 @@ class CartItem {
 	 */
 	mapItemDataFromResponse(itemData)
 	{
-		this.remoteKey = itemData['key'];
 		this.ownerId   = itemData.product_owner_id;
 		this.unitPrice = itemData.product_unit_price_raw;
 		this.photoUrl  = itemData.product_image;
@@ -39,6 +38,7 @@ class CartItem {
 		this.quantity  = itemData.product_quantity;
 		this.colorRGB  = itemData.product_color_rgb;
 		this.title     = itemData.product_title;
+		this.hash      = itemData.product_hash;
 	}
 
 	/**

@@ -51,7 +51,10 @@ class RemoteCart {
 			})
 				.then((response) =>
 				{
-					resolve(response.data);
+					if (response.data.status !== 'success') {
+						throw response.data.message;
+					}
+					resolve(response.data.data);
 				})
 				.catch((response) =>
 				{
@@ -67,7 +70,7 @@ class RemoteCart {
 	 */
 	addItemToCart(cartItem)
 	{
-		return new Promise((resolve, reject) => 
+		return new Promise((resolve, reject) =>
 		{
 			this.http.post(this.getUrl(), {
 				action: 'addItemToCart',
@@ -81,7 +84,7 @@ class RemoteCart {
 					if (response.data.status === 'error') {
 						throw response.data.message;
 					}
-					resolve(response.data.data);
+					resolve(response.data.data.added_item);
 				})
 				.catch((response) =>
 				{
@@ -91,18 +94,18 @@ class RemoteCart {
 	}
 
 	/**
-	 * @param index
+	 * @param hash
 	 * @param quantity
 	 * @returns {Promise}
 	 */
-	removeItemFromCart(index, quantity)
+	removeItemFromCart(hash, quantity)
 	{
 		return new Promise((resolve, reject) =>
 		{
 			this.http.post(this.getUrl(), {
 				action: 'removeItemFromCart',
-				key: index,
-				quantity: quantity
+				hash,
+				quantity
 			})
 				.then((response) =>
 				{
@@ -113,7 +116,6 @@ class RemoteCart {
 				})
 				.catch((response) =>
 				{
-					console.log(response);
 					reject(new Error(response));
 				});
 		});

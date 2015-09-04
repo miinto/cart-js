@@ -53,7 +53,7 @@ class Cart {
 					// Map dynamic data to the item
 					item.mapItemDataFromResponse(itemData);
 
-					// Add item or adjust quantit if exists
+					// Add item or adjust quantity if exists
 					let search = this.findSimilarItem(item);
 					if (search !== -1) {
 						this.items[search].adjustQuantity(quantity);
@@ -72,37 +72,39 @@ class Cart {
 
 	findSimilarItem(item)
 	{
-		let similarItem = -1;
-
 		for (let i = 0; i < this.items.length; i++) {
 			let currentItem = this.items[i];
-			if (currentItem.getProductId() == item.getProductId() && currentItem.getColor() == item.getColor() && currentItem.getSize() == item.getSize()) {
+			if (currentItem.hash == item.hash) {
 				return i;
 			}
 		}
 
-		return similarItem;
+		return -1;
 	}
 
 	/**
 	 * Remote item from cart
 	 * @param item
-	 * @returns {Promise}
+	 * @param quantity
+     * @returns {Promise}
 	 */
-	removeItem(item)
+	removeItem(item, quantity)
 	{
+		if(!quantity) {
+			quantity = 1;
+		}
 		let index = this.findSimilarItem(item);
 		if (index === -1) {
 			throw new Error('Could not find the item!');
 		}
 		return new Promise((resolve, reject) =>
 		{
-			this.remoteCart.removeItemFromCart(item.remoteKey, 1)
+			this.remoteCart.removeItemFromCart(item.hash, quantity)
 				.then(() =>
 				{
 					// Deduct quantity, and remove if below 0
 					let item = this.items[index];
-					item.quantity--;
+					item.quantity -= quantity;
 
 					if (item.getQuantity() <= 0) {
 						item = this.items.splice(index, 1);
