@@ -18,7 +18,7 @@ class CartItem {
 		this.ownerId       = 0;
 		this.unitPrice     = 0;
 		this.photoUrl      = '';
-		this.colorRGB      = '0,0,0';
+		this.colorRGB      = ['0', '0', '0'];
 		this.largePhotoUrl = '';
 		this.remoteUrl     = '';
 		this.hash          = '';
@@ -31,9 +31,11 @@ class CartItem {
 	 */
 	mapItemDataFromResponse(itemData)
 	{
-		this.ownerId   = itemData.product_owner_id;
-		this.unitPrice = itemData.product_unit_price_raw;
-		this.photoUrl  = itemData.product_image;
+		this.ownerId       = itemData.product_owner_id;
+		this.unitPrice     = itemData.product_unit_price_raw;
+		this.photoUrl      = itemData.product_image;
+		this.largePhotoUrl = itemData.product_image_large;
+
 		this.remoteUrl = itemData.product_url;
 		this.quantity  = itemData.product_quantity;
 		this.colorRGB  = itemData.product_color_rgb;
@@ -108,6 +110,11 @@ class CartItem {
 	getRemoteUrl()
 	{
 		return this.remoteUrl;
+	}
+	
+	getHash()
+	{
+		return this.hash;
 	}
 
 }

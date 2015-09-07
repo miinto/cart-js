@@ -27,9 +27,10 @@ class Cart {
 	 */
 	recalculateSubtotal()
 	{
+		this.subtotal = 0;
 		if (this.items && this.items.length > 0) {
 			for (let i = 0; i < this.items.length; i++) {
-				this.subtotal = +this.items[i].calculatePrice();
+				this.subtotal = this.subtotal + this.items[i].calculatePrice();
 			}
 		}
 	}
@@ -54,12 +55,13 @@ class Cart {
 					item.mapItemDataFromResponse(itemData);
 
 					// Add item or adjust quantity if exists
-					let search = this.findSimilarItem(item);
-					if (search !== -1) {
-						this.items[search].adjustQuantity(quantity);
+					let similarItem = this.findSimilarItem(item);
+					if (similarItem !== -1) {
+						similarItem.item.adjustQuantity(quantity);
 					} else {
 						this.items.push(item);
 					}
+					this.recalculateSubtotal();
 
 					resolve(item);
 
@@ -70,47 +72,61 @@ class Cart {
 		});
 	}
 
-	findSimilarItem(item)
+	/**
+	 * @param hash
+	 * @returns {*}
+	 */
+	findItemByHash(hash)
 	{
 		for (let i = 0; i < this.items.length; i++) {
 			let currentItem = this.items[i];
-			if (currentItem.hash == item.hash) {
-				return i;
+			if (currentItem.hash == hash) {
+				return {
+					item: currentItem,
+					index: i
+				};
 			}
 		}
 
 		return -1;
 	}
 
+	findSimilarItem(item)
+	{
+		return this.findItemByHash(item.hash);
+	}
+
 	/**
 	 * Remote item from cart
 	 * @param item
 	 * @param quantity
-     * @returns {Promise}
+	 * @returns {Promise}
 	 */
 	removeItem(item, quantity)
 	{
-		if(!quantity) {
+		if (!quantity) {
 			quantity = 1;
 		}
-		let index = this.findSimilarItem(item);
-		if (index === -1) {
-			throw new Error('Could not find the item!');
+
+		let search = this.findItemByHash(item.hash);
+
+		if (search === -1) {
+			throw new Error('Could not find the item to be removed!!' + item.hash);
 		}
 		return new Promise((resolve, reject) =>
 		{
-			this.remoteCart.removeItemFromCart(item.hash, quantity)
+			this.remoteCart.removeItemFromCart(search.item.hash, quantity)
 				.then(() =>
 				{
+					let itemToBeRemoved = search.item;
 					// Deduct quantity, and remove if below 0
-					let item = this.items[index];
-					item.quantity -= quantity;
+					itemToBeRemoved.adjustQuantity(-1 * quantity);
 
-					if (item.getQuantity() <= 0) {
-						item = this.items.splice(index, 1);
+					if (itemToBeRemoved.getQuantity() <= 0) {
+						itemToBeRemoved = this.items.splice(search.index, 1);
 					}
-
-					resolve(item);
+					this.recalculateSubtotal();
+					resolve(itemToBeRemoved);
 
 				}).catch((errorMessage) =>
 			{
