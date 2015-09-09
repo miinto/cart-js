@@ -9,15 +9,41 @@ const settings = window.miintoSettings;
 
 // Handle token and cookie stuff
 const suffixForCookieName = settings.baseUrl.split('.').pop();
-const tokenCookieKey      = 'miinto_affiliate_cart_' + suffixForCookieName.replace(/:/, '');
-const token               = cookieManager.get(tokenCookieKey);
+const expiration          = settings.cartExpiration || 7;
+let tokenCookieKey        = 'miinto_affiliate_cart_' + suffixForCookieName.replace(/:/, '');
+let cookieOptions         = {expires: expiration};
+
+if (settings.affiliateId === 'miintomobile') {
+
+	if(settings.forcedCookieDomain && settings.forcedCountryCode) {
+		tokenCookieKey          = settings.forcedCountryCode + 'devmiinookie';
+		cookieOptions['domain'] = settings.forcedCookieDomain;
+	} else if(settings.baseUrl.indexOf('sta.miinto.net') > -1) {
+		// staging 
+		// key: {countryCode}devmiinokie
+		// domain: .dk.sta.miinto.net
+		let hostname = settings.baseUrl.replace(/http:\/\//, '');
+		tokenCookieKey          = hostname.split('.').shift() + 'devmiinookie';
+		cookieOptions['domain'] = '.' + hostname;
+		
+	} else {
+		// prod
+		// key: {countryCode}miinookie
+		let hostname = settings.baseUrl.replace(/http:\/\//, '').replace(/www\./, '');
+		tokenCookieKey          = hostname.split('.').pop() + 'miinookie';
+		cookieOptions['domain'] = '.' + hostname;
+		console.log(tokenCookieKey);
+		console.log(cookieOptions);
+	}
+}
+
+const token = cookieManager.get(tokenCookieKey);
 
 // Base settings
 const baseUrl = settings.baseUrl + '/actions/shoppingcart_remote.php?easter=egg';
 //var baseUrl    = settings.baseUrl + '/actions/shoppingcart_remote.php?easter=egg&XDEBUG_SESSION_START=PHPSTORM';
 const checkoutUrl = settings.baseUrl + '/actions/shoppingcart_remote.php?method=getCheckoutRemoteCart';
-
-const remoteCart = new RemoteCart(baseUrl, httpRequest, token);
+const remoteCart  = new RemoteCart(baseUrl, httpRequest, token);
 
 // Fetch cart, and report back to the onready function
 remoteCart.getShoppingCart()
@@ -26,12 +52,6 @@ remoteCart.getShoppingCart()
 		if (window.miintoCartReady) {
 
 			// Place token
-			let expiration = settings.cartExpiration || 7;
-			let cookieOptions = { expires: expiration };		
-			if(settings.affiliateId === 'miintomobile') {
-				cookieOptions['path'] = '.' + settings.baseUrl.replace(/http:\/\//, '').replace(/www/,'');
-			}
-			
 			cookieManager.set(tokenCookieKey, cartData.cart.id, cookieOptions);
 
 			// Add ensure correct token on the remote cart
