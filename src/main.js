@@ -27,7 +27,12 @@ remoteCart.getShoppingCart()
 
 			// Place token
 			let expiration = settings.cartExpiration || 7;
-			cookieManager.set(tokenCookieKey, cartData.cart.id, {expires: expiration});
+			let cookieOptions = { expires: expiration };		
+			if(settings.affiliateId === 'miintomobile') {
+				cookieOptions['path'] = '.' + settings.baseUrl.replace(/http:\/\//, '').replace(/www/,'');
+			}
+			
+			cookieManager.set(tokenCookieKey, cartData.cart.id, cookieOptions);
 
 			// Add ensure correct token on the remote cart
 			remoteCart.setToken(cartData.cart.id);
