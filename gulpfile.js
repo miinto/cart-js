@@ -21,9 +21,9 @@ function compile(watch)
 			})
 			.pipe(source('cart-bundle.js'))
 			.pipe(buffer())
-			.pipe(sourcemaps.init({loadMaps: true}))
+//			.pipe(sourcemaps.init({loadMaps: true}))
 			.pipe(uglify())
-			.pipe(sourcemaps.write('./'))
+//			.pipe(sourcemaps.write('./'))
 //			.pipe(gulp.dest('./build'));
 			.pipe(gulp.dest('../miinto_com/static/scripts/cartjs'));
 	}

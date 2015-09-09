@@ -32,8 +32,6 @@ if (settings.affiliateId === 'miintomobile') {
 		let hostname = settings.baseUrl.replace(/http:\/\//, '').replace(/www\./, '');
 		tokenCookieKey          = hostname.split('.').pop() + 'miinookie';
 		cookieOptions['domain'] = '.' + hostname;
-		console.log(tokenCookieKey);
-		console.log(cookieOptions);
 	}
 }
 
