@@ -22,14 +22,14 @@ if (settings.affiliateId === 'miintomobile') {
 		// staging 
 		// key: {countryCode}devmiinokie
 		// domain: .dk.sta.miinto.net
-		let hostname = settings.baseUrl.replace(/http:\/\//, '');
+		let hostname = settings.baseUrl.replace(/https?:\/\//, '');
 		tokenCookieKey          = hostname.split('.').shift() + 'devmiinookie';
 		cookieOptions['domain'] = '.' + hostname;
 		
 	} else {
 		// prod
 		// key: {countryCode}miinookie
-		let hostname = settings.baseUrl.replace(/http:\/\//, '').replace(/www\./, '');
+		let hostname = settings.baseUrl.replace(/https?:\/\//, '').replace(/www\./, '');
 		tokenCookieKey          = hostname.split('.').pop() + 'miinookie';
 		cookieOptions['domain'] = '.' + hostname;
 	}
