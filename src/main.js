@@ -8,7 +8,7 @@ const CartItem      = require('./CartItem');
 const settings = window.miintoSettings;
 
 // Handle token and cookie stuff
-const suffixForCookieName = settings.baseUrl.split('.').pop();
+const suffixForCookieName = settings.baseUrl.replace('http:', 'https:').split('.').pop();
 const expiration          = settings.cartExpiration || 7;
 let tokenCookieKey        = 'miinto_affiliate_cart_' + suffixForCookieName.replace(/:/, '');
 let cookieOptions         = {expires: expiration};
@@ -18,14 +18,14 @@ if (settings.affiliateId === 'miintomobile') {
 	if(settings.forcedCookieDomain && settings.forcedCountryCode) {
 		tokenCookieKey          = settings.forcedCountryCode + 'devmiinookie';
 		cookieOptions['domain'] = settings.forcedCookieDomain;
-	} else if(settings.baseUrl.indexOf('sta.miinto.net') > -1) {
-		// staging 
+	} else if(settings.baseUrl.replace('http:', 'https:').indexOf('sta.miinto.net') > -1) {
+		// staging
 		// key: {countryCode}devmiinokie
 		// domain: .dk.sta.miinto.net
 		let hostname = settings.baseUrl.replace(/https?:\/\//, '');
 		tokenCookieKey          = hostname.split('.').shift() + 'devmiinookie';
 		cookieOptions['domain'] = '.' + hostname;
-		
+
 	} else {
 		// prod
 		// key: {countryCode}miinookie
@@ -38,10 +38,10 @@ if (settings.affiliateId === 'miintomobile') {
 const token = cookieManager.get(tokenCookieKey);
 
 // Base settings
-const baseUrl = settings.baseUrl + '/actions/shoppingcart_remote.php?easter=egg';
+const baseUrl = settings.baseUrl.replace('http:', 'https:')+ '/actions/shoppingcart_remote.php?easter=egg';
 //var baseUrl    = settings.baseUrl + '/actions/shoppingcart_remote.php?easter=egg&XDEBUG_SESSION_START=PHPSTORM';
-const checkoutUrl = settings.baseUrl + '/actions/shoppingcart_remote.php?method=getCheckoutRemoteCart';
-const remoteCart  = new RemoteCart(baseUrl, httpRequest, token);
+const checkoutUrl = settings.baseUrl.replace('http:', 'https:') + '/actions/shoppingcart_remote.php?method=getCheckoutRemoteCart';
+const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), httpRequest, token);
 
 // Fetch cart, and report back to the onready function
 remoteCart.getShoppingCart()
@@ -76,7 +76,3 @@ remoteCart.getShoppingCart()
 {
 	console.log('Getting cart failed', err);
 });
-
-
-
-
