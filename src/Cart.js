@@ -13,7 +13,7 @@ class Cart {
 	constructor(token, affiliateId, locationIds, remoteCart, items, checkoutUrl)
 	{
 		this.affiliateId = affiliateId;
-		this.locationIds = locationIds;
+		this.locationIds = locationIds || [];
 		this.remoteCart  = remoteCart;
 		this.token       = token;
 		this.checkoutUrl = checkoutUrl;
@@ -143,7 +143,7 @@ class Cart {
 	 */
 	getCheckoutUrl()
 	{
-		return this.checkoutUrl + '&token=' + this.token + '&affiliate_id=' + this.affiliateId + this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '');
+		return this.checkoutUrl + '&token=' + this.token + '&affiliate_id=' + this.affiliateId + Array.isArray(this.locationIds) ? this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '') : '';
 	}
 
 	/**
