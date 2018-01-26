@@ -5,13 +5,15 @@ class Cart {
 	 * Construct
 	 * @param token
 	 * @param affiliateId
+	 * @param locationIds
 	 * @param remoteCart
 	 * @param items
 	 * @param checkoutUrl
 	 */
-	constructor(token, affiliateId, remoteCart, items, checkoutUrl)
+	constructor(token, affiliateId, locationIds, remoteCart, items, checkoutUrl)
 	{
 		this.affiliateId = affiliateId;
+		this.locationIds = locationIds;
 		this.remoteCart  = remoteCart;
 		this.token       = token;
 		this.checkoutUrl = checkoutUrl;
@@ -141,7 +143,7 @@ class Cart {
 	 */
 	getCheckoutUrl()
 	{
-		return this.checkoutUrl + '&token=' + this.token + '&affiliate_id=' + this.affiliateId;
+		return this.checkoutUrl + '&token=' + this.token + '&affiliate_id=' + this.affiliateId + this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '');
 	}
 
 	/**
@@ -163,4 +165,3 @@ class Cart {
 }
 
 module.exports = Cart;
-
