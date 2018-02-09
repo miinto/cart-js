@@ -65,7 +65,7 @@ remoteCart.getShoppingCart()
 			});
 
 			// Create cart
-			let cart = new Cart(cartData.cart.id, settings.affiliateId, remoteCart, items, checkoutUrl);
+			let cart = new Cart(cartData.cart.id, settings.affiliateId, settings.locationIds, remoteCart, items, checkoutUrl);
 
 			// We're ready!!
 			window.miintoCartReady(cart);

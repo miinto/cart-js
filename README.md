@@ -8,10 +8,11 @@ The cart is loaded asynchronously with the snippet below. A `miintoSettings` obj
 
     window.miintoSettings = {
         affiliateId: 'myAwesomeId',
+        locationIds: ['locationId-1', 'locationId-2', 'locationId-3'],
         cartExpiration: 7,
         baseUrl: 'http://www.miinto.dk'
     };
-    
+
 	(function(d, w, undefined)
 	{
 		var miintocart   = d.createElement('script');
