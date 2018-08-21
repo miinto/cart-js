@@ -12,12 +12,13 @@
 		affiliateId: 'myAwesomeId',
 		locationIds: ['locationId-1', 'locationId-2', 'locationId-3'],
 		cartExpiration: 7,
-		baseUrl: 'http://www.miinto.dk'
+		baseUrl: 'http://dk-local-dp.miinto.net'
 	};
 
 	window.miintoCartReady = function(myCart)
 	{
 		console.log('my cart is ready!', myCart);
+		window.cart = myCart;
 	};
 
 	(function(d, w, undefined)
@@ -25,7 +26,7 @@
 		var miintocart   = d.createElement('script');
 		miintocart.type  = 'text/javascript';
 		miintocart.async = true;
-		miintocart.src   = w.miintoSettings.baseUrl + '/static/scripts/cartjs/cart-bundle.js';
+		miintocart.src   = w.miintoSettings.baseUrl + '/static/scripts/cartjs/cart-bundle.js?cb=' + Math.random();
 		var s            = d.getElementsByTagName('script')[0];
 		s.parentNode.insertBefore(miintocart, s);
 	}(document, window));

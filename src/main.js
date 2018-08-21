@@ -38,9 +38,8 @@ if (settings.affiliateId === 'miintomobile') {
 const token = cookieManager.get(tokenCookieKey);
 
 // Base settings
-const baseUrl = settings.baseUrl.replace('http:', 'https:')+ '/actions/shoppingcart_remote.php?easter=egg';
-//var baseUrl    = settings.baseUrl + '/actions/shoppingcart_remote.php?easter=egg&XDEBUG_SESSION_START=PHPSTORM';
-const checkoutUrl = settings.baseUrl.replace('http:', 'https:') + '/actions/shoppingcart_remote.php?method=getCheckoutRemoteCart';
+const baseUrl = settings.baseUrl.replace('http:', 'https:');
+const checkoutUrl = settings.baseUrl.replace('http:', 'https:');
 const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), httpRequest, token);
 
 // Fetch cart, and report back to the onready function

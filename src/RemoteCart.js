@@ -44,11 +44,9 @@ class RemoteCart {
 	{
 		return new Promise((resolve, reject) =>
 		{
-			this.http.get(this.getUrl(), {
-				params: {
-					method: 'getShoppingCart'
-				}
-			})
+			const url = this.getUrl() + '/api/basket/remote';
+
+			this.http.get(url)
 				.then((response) =>
 				{
 					if (response.data.status !== 'success') {
@@ -72,9 +70,10 @@ class RemoteCart {
 	{
 		return new Promise((resolve, reject) =>
 		{
-			this.http.post(this.getUrl(), {
-				action: 'addItemToCart',
-				product_id: cartItem.getProductId(),
+			const url = this.getUrl() + '/api/basket/product';
+
+			this.http.post(url, {
+				productId: cartItem.getProductId(),
 				color: cartItem.getColor(),
 				size: cartItem.getSize(),
 				amount: cartItem.getQuantity()
@@ -102,9 +101,9 @@ class RemoteCart {
 	{
 		return new Promise((resolve, reject) =>
 		{
-			this.http.post(this.getUrl(), {
-				action: 'removeItemFromCart',
-				hash,
+			const url = this.getUrl() + '/api/basket/product/' + hash;
+
+			this.http.delete(url, {,
 				quantity
 			})
 				.then((response) =>
