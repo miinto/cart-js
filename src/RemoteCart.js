@@ -103,7 +103,7 @@ class RemoteCart {
 		{
 			const url = this.getUrl() + '/api/basket/product/' + hash;
 
-			this.http.delete(url, {,
+			this.http.delete(url, {
 				quantity
 			})
 				.then((response) =>
