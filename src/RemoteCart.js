@@ -5,10 +5,9 @@ class RemoteCart {
 	 * @param http
 	 * @param token
 	 */
-	constructor(baseUrl, http, token)
+	constructor(baseUrl, token)
 	{
 		this.baseUrl = baseUrl;
-		this.http    = http;
 		this.token   = token;
 	}
 
@@ -26,9 +25,9 @@ class RemoteCart {
 	 * Returns the "base url" with the token appended if present
 	 * @returns {*}
 	 */
-	getUrl()
+	getUrl(path)
 	{
-		let url = this.baseUrl;
+		let url = `${this.baseUrl}${path}`;
 		if (this.token) {
 			url = url + '&token=' + this.token;
 		}
@@ -44,19 +43,21 @@ class RemoteCart {
 	{
 		return new Promise((resolve, reject) =>
 		{
-			const url = this.getUrl() + '/api/basket/remote';
+			const url = this.getUrl('/api/basket');
 
-			this.http.get(url)
+			fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
 				.then((response) =>
 				{
-					if (response.data.status !== 'success') {
-						throw response.data.message;
-					}
-					resolve(response.data.data);
+					resolve(response.json().data.data);
 				})
 				.catch((response) =>
 				{
-					reject(Error(response));
+					reject(new Error(response));
 				});
 		});
 
@@ -72,21 +73,22 @@ class RemoteCart {
 		{
 			const url = this.getUrl() + '/api/basket/product';
 
-			this.http.post(url, {
-				productId: cartItem.getProductId(),
-				color: cartItem.getColor(),
-				size: cartItem.getSize(),
-				amount: cartItem.getQuantity()
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				data: {
+					productId: cartItem.getProductId(),
+					color: cartItem.getColor(),
+					size: cartItem.getSize(),
+					amount: cartItem.getQuantity()
+				}
 			})
-				.then((response) =>
-				{
-					if (response.data.status === 'error') {
-						throw response.data.message;
-					}
-					resolve(response.data.data.added_item);
+				.then((response) => {
+					resolve(response.json().data.data);
 				})
-				.catch((response) =>
-				{
+				.catch((response) => {
 					reject(new Error(response));
 				});
 		});
@@ -103,18 +105,16 @@ class RemoteCart {
 		{
 			const url = this.getUrl() + '/api/basket/product/' + hash;
 
-			this.http.delete(url, {
-				quantity
+			fetch(url, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				}
 			})
-				.then((response) =>
-				{
-					if (response.data.status === 'error') {
-						throw response.data.message;
-					}
-					resolve(response.data.data);
+				.then((response) => {
+					resolve(response.json().data.data);
 				})
-				.catch((response) =>
-				{
+				.catch((response) => {
 					reject(new Error(response));
 				});
 		});

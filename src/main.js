@@ -1,5 +1,5 @@
 require("babelify/polyfill");
-const httpRequest   = require('axios');
+require("whatwg-fetch");
 const cookieManager = require('js-cookie');
 const RemoteCart    = require('./RemoteCart');
 const Cart          = require('./Cart');
@@ -40,12 +40,13 @@ const token = cookieManager.get(tokenCookieKey);
 // Base settings
 const baseUrl = settings.baseUrl.replace('http:', 'https:');
 const checkoutUrl = settings.baseUrl.replace('http:', 'https:');
-const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), httpRequest, token);
+const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), token);
 
 // Fetch cart, and report back to the onready function
 remoteCart.getShoppingCart()
 	.then((cartData) =>
 	{
+		console.log(cartData);
 		if (window.miintoCartReady) {
 
 			// Place token
