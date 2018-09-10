@@ -46,18 +46,17 @@ const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), token);
 remoteCart.getShoppingCart()
 	.then((cartData) =>
 	{
-		console.log(cartData);
 		if (window.miintoCartReady) {
 
 			// Place token
-			cookieManager.set(tokenCookieKey, cartData.cart.id, cookieOptions);
+			cookieManager.set(tokenCookieKey, cartData.id, cookieOptions);
 
 			// Add ensure correct token on the remote cart
-			remoteCart.setToken(cartData.cart.id);
+			remoteCart.setToken(cartData.id);
 
 			// Restore items alreay in the cart
 			let items = [];
-			cartData.formatted_items.map((itemData) =>
+			cartData.items.map((itemData) =>
 			{
 				let item = new CartItem(itemData.product_id, itemData.product_color, itemData.product_size, itemData.product_quantity);
 				item.mapItemDataFromResponse(itemData);
@@ -65,7 +64,7 @@ remoteCart.getShoppingCart()
 			});
 
 			// Create cart
-			let cart = new Cart(cartData.cart.id, settings.affiliateId, settings.locationIds, remoteCart, items, checkoutUrl);
+			let cart = new Cart(cartData.id, settings.affiliateId, settings.locationIds, remoteCart, items, checkoutUrl);
 
 			// We're ready!!
 			window.miintoCartReady(cart);

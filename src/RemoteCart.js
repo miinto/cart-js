@@ -28,9 +28,9 @@ class RemoteCart {
 	getUrl(path)
 	{
 		let url = `${this.baseUrl}${path}`;
-		if (this.token) {
-			url = url + '&token=' + this.token;
-		}
+		// if (this.token) {
+		// 	url = url + '?token=' + this.token;
+		// }
 
 		return url;
 	}
@@ -45,15 +45,15 @@ class RemoteCart {
 		{
 			const url = this.getUrl('/api/basket');
 
-			fetch(url, {
+			return fetch(url, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json'
-				}
+				},
 			})
 				.then((response) =>
 				{
-					resolve(response.json().data.data);
+					response.json().then(data => resolve(data.data));
 				})
 				.catch((response) =>
 				{
@@ -71,22 +71,22 @@ class RemoteCart {
 	{
 		return new Promise((resolve, reject) =>
 		{
-			const url = this.getUrl() + '/api/basket/product';
+			const url = this.getUrl('/api/basket/product');
 
 			fetch(url, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				data: {
+				body: JSON.stringify({
 					productId: cartItem.getProductId(),
 					color: cartItem.getColor(),
 					size: cartItem.getSize(),
 					amount: cartItem.getQuantity()
-				}
+				})
 			})
 				.then((response) => {
-					resolve(response.json().data.data);
+					response.json().then(data => resolve(data.data));
 				})
 				.catch((response) => {
 					reject(new Error(response));
@@ -112,7 +112,7 @@ class RemoteCart {
 				}
 			})
 				.then((response) => {
-					resolve(response.json().data.data);
+					response.json().then(data => resolve(data.data));
 				})
 				.catch((response) => {
 					reject(new Error(response));
