@@ -39,7 +39,7 @@ const token = cookieManager.get(tokenCookieKey);
 
 // Base settings
 const baseUrl = settings.baseUrl.replace('http:', 'https:');
-const checkoutUrl = settings.baseUrl.replace('http:', 'https:');
+const checkoutUrl = settings.baseUrl.replace('http:', 'https:') + '/api/basket/remote';
 const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), token);
 
 // Fetch cart, and report back to the onready function
