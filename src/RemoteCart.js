@@ -28,9 +28,6 @@ class RemoteCart {
 	getUrl(path)
 	{
 		let url = `${this.baseUrl}${path}`;
-		// if (this.token) {
-		// 	url = url + '?token=' + this.token;
-		// }
 
 		return url;
 	}
@@ -74,7 +71,7 @@ class RemoteCart {
 		{
 			const url = this.getUrl('/api/basket/product');
 
-			fetch(url, {
+			return fetch(url, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -105,9 +102,9 @@ class RemoteCart {
 	{
 		return new Promise((resolve, reject) =>
 		{
-			const url = this.getUrl() + '/api/basket/product/' + hash;
+			const url = this.getUrl('/api/basket/product/' + hash);
 
-			fetch(url, {
+			return fetch(url, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',
