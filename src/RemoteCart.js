@@ -48,7 +48,8 @@ class RemoteCart {
 			return fetch(url, {
 				method: 'GET',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'Miinto-Basket-Token': this.token,
 				},
 			})
 				.then((response) =>
@@ -76,7 +77,8 @@ class RemoteCart {
 			fetch(url, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'Miinto-Basket-Token': this.token,
 				},
 				body: JSON.stringify({
 					productId: cartItem.getProductId(),
@@ -108,7 +110,8 @@ class RemoteCart {
 			fetch(url, {
 				method: 'DELETE',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'Miinto-Basket-Token': this.token,
 				}
 			})
 				.then((response) => {
