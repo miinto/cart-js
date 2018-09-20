@@ -143,7 +143,7 @@ class Cart {
 	 */
 	getCheckoutUrl()
 	{
-		return this.checkoutUrl + '&token=' + this.token + '&affiliate_id=' + this.affiliateId + (Array.isArray(this.locationIds) ? this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '') : '');
+		return this.checkoutUrl + '?token=' + this.token + '&affiliate_id=' + this.affiliateId + (Array.isArray(this.locationIds) ? this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '') : '');
 	}
 
 	/**

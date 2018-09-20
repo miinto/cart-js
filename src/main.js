@@ -1,5 +1,5 @@
 require("babelify/polyfill");
-const httpRequest   = require('axios');
+require("whatwg-fetch");
 const cookieManager = require('js-cookie');
 const RemoteCart    = require('./RemoteCart');
 const Cart          = require('./Cart');
@@ -38,10 +38,9 @@ if (settings.affiliateId === 'miintomobile') {
 const token = cookieManager.get(tokenCookieKey);
 
 // Base settings
-const baseUrl = settings.baseUrl.replace('http:', 'https:')+ '/actions/shoppingcart_remote.php?easter=egg';
-//var baseUrl    = settings.baseUrl + '/actions/shoppingcart_remote.php?easter=egg&XDEBUG_SESSION_START=PHPSTORM';
-const checkoutUrl = settings.baseUrl.replace('http:', 'https:') + '/actions/shoppingcart_remote.php?method=getCheckoutRemoteCart';
-const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), httpRequest, token);
+const baseUrl = settings.baseUrl.replace('http:', 'https:');
+const checkoutUrl = settings.baseUrl.replace('http:', 'https:') + '/api/basket/remote';
+const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), token);
 
 // Fetch cart, and report back to the onready function
 remoteCart.getShoppingCart()
@@ -50,22 +49,22 @@ remoteCart.getShoppingCart()
 		if (window.miintoCartReady) {
 
 			// Place token
-			cookieManager.set(tokenCookieKey, cartData.cart.id, cookieOptions);
+			cookieManager.set(tokenCookieKey, cartData.id, cookieOptions);
 
 			// Add ensure correct token on the remote cart
-			remoteCart.setToken(cartData.cart.id);
+			remoteCart.setToken(cartData.id);
 
 			// Restore items alreay in the cart
 			let items = [];
-			cartData.formatted_items.map((itemData) =>
+			cartData.items.map((itemData) =>
 			{
-				let item = new CartItem(itemData.product_id, itemData.product_color, itemData.product_size, itemData.product_quantity);
+				let item = new CartItem(itemData.productIdd, itemData.color.name, itemData.size, itemData.quantity);
 				item.mapItemDataFromResponse(itemData);
 				items.push(item);
 			});
 
 			// Create cart
-			let cart = new Cart(cartData.cart.id, settings.affiliateId, settings.locationIds, remoteCart, items, checkoutUrl);
+			let cart = new Cart(cartData.id, settings.affiliateId, settings.locationIds, remoteCart, items, checkoutUrl);
 
 			// We're ready!!
 			window.miintoCartReady(cart);
