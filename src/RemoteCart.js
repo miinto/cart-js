@@ -32,6 +32,18 @@ class RemoteCart {
 		return url;
 	}
 
+	getHeaders() {
+		let headers = {
+			'Content-Type': 'application/json',
+		};
+
+		if (this.token) {
+			headers['Miinto-Basket-Token'] = this.token
+		}
+
+		return headers;
+	}
+
 	/**
 	 * Get the shopping cart
 	 * @returns {Promise}
@@ -44,10 +56,7 @@ class RemoteCart {
 
 			return fetch(url, {
 				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'Miinto-Basket-Token': this.token,
-				},
+				headers: this.getHeaders(),
 			})
 				.then((response) =>
 				{
@@ -73,10 +82,7 @@ class RemoteCart {
 
 			return fetch(url, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Miinto-Basket-Token': this.token,
-				},
+				headers: this.getHeaders(),
 				body: JSON.stringify({
 					productId: cartItem.getProductId(),
 					color: cartItem.getColor(),
@@ -106,10 +112,7 @@ class RemoteCart {
 
 			return fetch(url, {
 				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-					'Miinto-Basket-Token': this.token,
-				}
+				headers: this.getHeaders()
 			})
 				.then((response) => {
 					response.json().then(data => resolve(data.data));
