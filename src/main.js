@@ -58,7 +58,7 @@ remoteCart.getShoppingCart()
 			let items = [];
 			cartData.items.map((itemData) =>
 			{
-				let item = new CartItem(itemData.productIdd, itemData.color.name, itemData.size, itemData.quantity);
+				let item = new CartItem(itemData.productId, itemData.color.name, itemData.size, itemData.quantity);
 				item.mapItemDataFromResponse(itemData);
 				items.push(item);
 			});

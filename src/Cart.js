@@ -51,18 +51,15 @@ class Cart {
 		{
 			let item = new CartItem(productId, color, size, quantity);
 			this.remoteCart.addItemToCart(item)
-				.then((itemData) =>
+				.then((product) =>
 				{
+					const itemData = product.items.filter(pItem => pItem.productId == productId)[0];
+
 					// Map dynamic data to the item
 					item.mapItemDataFromResponse(itemData);
 
-					// Add item or adjust quantity if exists
-					let similarItem = this.findSimilarItem(item);
-					if (similarItem !== -1) {
-						similarItem.item.adjustQuantity(quantity);
-					} else {
-						this.items.push(item);
-					}
+					this.items = product.items
+
 					this.recalculateSubtotal();
 
 					resolve(item);
