@@ -51,14 +51,14 @@ class Cart {
 		{
 			let item = new CartItem(productId, color, size, quantity);
 			this.remoteCart.addItemToCart(item)
-				.then((product) =>
+				.then((cart) =>
 				{
-					const itemData = product.items.filter(pItem => pItem.productId == productId)[0];
+					const itemData = cart.items.filter(pItem => pItem.productId == productId)[0];
 
 					// Map dynamic data to the item
 					item.mapItemDataFromResponse(itemData);
 
-					this.items = product.items
+					this.items = cart.items
 
 					this.recalculateSubtotal();
 
@@ -115,16 +115,14 @@ class Cart {
 		return new Promise((resolve, reject) =>
 		{
 			this.remoteCart.removeItemFromCart(search.item.hash, quantity)
-				.then(() =>
+				.then((cart) =>
 				{
-					let itemToBeRemoved = search.item;
-					// Deduct quantity, and remove if below 0
-					itemToBeRemoved.adjustQuantity(-1 * quantity);
+					const itemToBeRemoved = search.item;
 
-					if (itemToBeRemoved.getQuantity() <= 0) {
-						itemToBeRemoved = this.items.splice(search.index, 1);
-					}
+					this.items = cart.items;
+
 					this.recalculateSubtotal();
+
 					resolve(itemToBeRemoved);
 
 				}).catch((errorMessage) =>
