@@ -21,20 +21,15 @@ class Cart {
 
 		this.items = items || [];
 
-		this.recalculateSubtotal();
+		this.recalculateSubtotal(remoteCart.subtotal);
 	}
 
 	/**
-	 * Recalculates subtotal bases on items in cart
+	 * Recalculates subtotal
 	 */
-	recalculateSubtotal()
+	recalculateSubtotal(subtotal)
 	{
-		this.subtotal = 0;
-		if (this.items && this.items.length > 0) {
-			for (let i = 0; i < this.items.length; i++) {
-				this.subtotal = this.subtotal + this.items[i].calculatePrice();
-			}
-		}
+		this.subtotal = subtotal;
 	}
 
 	/**
@@ -58,9 +53,13 @@ class Cart {
 					// Map dynamic data to the item
 					item.mapItemDataFromResponse(itemData);
 
-					this.items = cart.items
+					this.items = cart.items.map(i => {
+						const cartItem = new CartItem(i.productId, i.color.name, i.size, i.quantity);
+						cartItem.mapItemDataFromResponse(i);
+						return cartItem;
+					});
 
-					this.recalculateSubtotal();
+					this.recalculateSubtotal(cart.subtotal);
 
 					resolve(item);
 
@@ -119,9 +118,13 @@ class Cart {
 				{
 					const itemToBeRemoved = search.item;
 
-					this.items = cart.items;
+					this.items = cart.items.map(i => {
+						const cartItem = new CartItem(i.productId, i.color.name, i.size, i.quantity);
+						cartItem.mapItemDataFromResponse(i);
+						return cartItem;
+					});
 
-					this.recalculateSubtotal();
+					this.recalculateSubtotal(cart.subtotal);
 
 					resolve(itemToBeRemoved);
 

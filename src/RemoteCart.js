@@ -112,7 +112,10 @@ class RemoteCart {
 
 			return fetch(url, {
 				method: 'DELETE',
-				headers: this.getHeaders()
+				headers: this.getHeaders(),
+				body: JSON.stringify({
+					amount: quantity
+				})
 			})
 				.then((response) => {
 					response.json().then(data => resolve(data.data));

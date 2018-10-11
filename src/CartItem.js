@@ -36,7 +36,7 @@ class CartItem {
 		this.photoUrl      = itemData.photoThumbUrl;
 
 		this.remoteUrl = itemData.productUrl;
-		this.quantity  = itemData.uantity;
+		this.quantity  = itemData.quantity;
 		this.colorRGB  = [itemData.color.r, itemData.color.g, itemData.color.b];
 		this.title     = itemData.title;
 		this.hash      = itemData.hash;
