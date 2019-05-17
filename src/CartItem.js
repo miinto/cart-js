@@ -31,15 +31,17 @@ class CartItem {
 	 */
 	mapItemDataFromResponse(itemData)
 	{
-		this.ownerId       = itemData.ownerId;
-		this.unitPrice     = itemData.unitPrice;
-		this.photoUrl      = itemData.photoThumbUrl;
+		if(itemData) {
+			this.ownerId       = itemData.ownerId;
+			this.unitPrice     = itemData.unitPrice;
+			this.photoUrl      = itemData.photoThumbUrl;
 
-		this.remoteUrl = itemData.productUrl;
-		this.quantity  = itemData.quantity;
-		this.colorRGB  = [itemData.color.r, itemData.color.g, itemData.color.b];
-		this.title     = itemData.title;
-		this.hash      = itemData.hash;
+			this.remoteUrl = itemData.productUrl;
+			this.quantity  = itemData.quantity;
+			this.colorRGB  = [itemData.color.r, itemData.color.g, itemData.color.b];
+			this.title     = itemData.title;
+			this.hash      = itemData.hash;
+		}
 	}
 
 	/**

@@ -91,7 +91,13 @@ class RemoteCart {
 				})
 			})
 				.then((response) => {
-					response.json().then(data => resolve(data.data));
+					response.json().then(data => {
+						if(response.status === 200) {
+							resolve(data.data)
+						} else {
+							reject(new Error(data.meta && data.meta.message ? data.meta.message : response.statusText));
+						}
+					});
 				})
 				.catch((response) => {
 					reject(new Error(response));
