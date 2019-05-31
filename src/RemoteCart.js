@@ -5,10 +5,9 @@ class RemoteCart {
 	 * @param http
 	 * @param token
 	 */
-	constructor(baseUrl, http, token)
+	constructor(baseUrl, token)
 	{
 		this.baseUrl = baseUrl;
-		this.http    = http;
 		this.token   = token;
 	}
 
@@ -26,14 +25,23 @@ class RemoteCart {
 	 * Returns the "base url" with the token appended if present
 	 * @returns {*}
 	 */
-	getUrl()
+	getUrl(path)
 	{
-		let url = this.baseUrl;
-		if (this.token) {
-			url = url + '&token=' + this.token;
-		}
+		let url = `${this.baseUrl}${path}`;
 
 		return url;
+	}
+
+	getHeaders() {
+		let headers = {
+			'Content-Type': 'application/json',
+		};
+
+		if (this.token) {
+			headers['Miinto-Basket-Token'] = this.token
+		}
+
+		return headers;
 	}
 
 	/**
@@ -44,21 +52,19 @@ class RemoteCart {
 	{
 		return new Promise((resolve, reject) =>
 		{
-			this.http.get(this.getUrl(), {
-				params: {
-					method: 'getShoppingCart'
-				}
+			const url = this.getUrl('/api/basket');
+
+			return fetch(url, {
+				method: 'GET',
+				headers: this.getHeaders(),
 			})
 				.then((response) =>
 				{
-					if (response.data.status !== 'success') {
-						throw response.data.message;
-					}
-					resolve(response.data.data);
+					response.json().then(data => resolve(data.data));
 				})
 				.catch((response) =>
 				{
-					reject(Error(response));
+					reject(new Error(response));
 				});
 		});
 
@@ -72,22 +78,28 @@ class RemoteCart {
 	{
 		return new Promise((resolve, reject) =>
 		{
-			this.http.post(this.getUrl(), {
-				action: 'addItemToCart',
-				product_id: cartItem.getProductId(),
-				color: cartItem.getColor(),
-				size: cartItem.getSize(),
-				amount: cartItem.getQuantity()
-			})
-				.then((response) =>
-				{
-					if (response.data.status === 'error') {
-						throw response.data.message;
-					}
-					resolve(response.data.data.added_item);
+			const url = this.getUrl('/api/basket/product');
+
+			return fetch(url, {
+				method: 'POST',
+				headers: this.getHeaders(),
+				body: JSON.stringify({
+					productId: cartItem.getProductId(),
+					color: cartItem.getColor(),
+					size: cartItem.getSize(),
+					amount: cartItem.getQuantity()
 				})
-				.catch((response) =>
-				{
+			})
+				.then((response) => {
+					response.json().then(data => {
+						if(response.status === 200) {
+							resolve(data.data)
+						} else {
+							reject(new Error(data.meta && data.meta.message ? data.meta.message : response.statusText));
+						}
+					});
+				})
+				.catch((response) => {
 					reject(new Error(response));
 				});
 		});
@@ -102,20 +114,19 @@ class RemoteCart {
 	{
 		return new Promise((resolve, reject) =>
 		{
-			this.http.post(this.getUrl(), {
-				action: 'removeItemFromCart',
-				hash,
-				quantity
-			})
-				.then((response) =>
-				{
-					if (response.data.status === 'error') {
-						throw response.data.message;
-					}
-					resolve(response.data.data);
+			const url = this.getUrl('/api/basket/product/' + hash);
+
+			return fetch(url, {
+				method: 'DELETE',
+				headers: this.getHeaders(),
+				body: JSON.stringify({
+					amount: quantity
 				})
-				.catch((response) =>
-				{
+			})
+				.then((response) => {
+					response.json().then(data => resolve(data.data));
+				})
+				.catch((response) => {
 					reject(new Error(response));
 				});
 		});

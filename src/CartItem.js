@@ -31,16 +31,17 @@ class CartItem {
 	 */
 	mapItemDataFromResponse(itemData)
 	{
-		this.ownerId       = itemData.product_owner_id;
-		this.unitPrice     = itemData.product_unit_price_raw;
-		this.photoUrl      = itemData.product_image;
-		this.largePhotoUrl = itemData.product_image_large;
+		if(itemData) {
+			this.ownerId       = itemData.ownerId;
+			this.unitPrice     = itemData.unitPrice;
+			this.photoUrl      = itemData.photoThumbUrl;
 
-		this.remoteUrl = itemData.product_url;
-		this.quantity  = itemData.product_quantity;
-		this.colorRGB  = itemData.product_color_rgb;
-		this.title     = itemData.product_title;
-		this.hash      = itemData.product_hash;
+			this.remoteUrl = itemData.productUrl;
+			this.quantity  = itemData.quantity;
+			this.colorRGB  = [itemData.color.r, itemData.color.g, itemData.color.b];
+			this.title     = itemData.title;
+			this.hash      = itemData.hash;
+		}
 	}
 
 	/**
@@ -111,7 +112,7 @@ class CartItem {
 	{
 		return this.remoteUrl;
 	}
-	
+
 	getHash()
 	{
 		return this.hash;

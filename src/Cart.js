@@ -10,31 +10,28 @@ class Cart {
 	 * @param items
 	 * @param checkoutUrl
 	 */
-	constructor(token, affiliateId, locationIds, remoteCart, items, checkoutUrl)
+	constructor(token, affiliateId, locationIds, remoteCart, items, checkoutUrl, config)
 	{
+		var cartConfig = config || {};
 		this.affiliateId = affiliateId;
 		this.locationIds = locationIds || [];
 		this.remoteCart  = remoteCart;
 		this.token       = token;
 		this.checkoutUrl = checkoutUrl;
 		this.subtotal    = 0;
+		this.errorRedirectUrl = cartConfig.errorRedirectUrl;
 
 		this.items = items || [];
 
-		this.recalculateSubtotal();
+		this.recalculateSubtotal(remoteCart.subtotal);
 	}
 
 	/**
-	 * Recalculates subtotal bases on items in cart
+	 * Recalculates subtotal
 	 */
-	recalculateSubtotal()
+	recalculateSubtotal(subtotal)
 	{
-		this.subtotal = 0;
-		if (this.items && this.items.length > 0) {
-			for (let i = 0; i < this.items.length; i++) {
-				this.subtotal = this.subtotal + this.items[i].calculatePrice();
-			}
-		}
+		this.subtotal = subtotal;
 	}
 
 	/**
@@ -51,19 +48,20 @@ class Cart {
 		{
 			let item = new CartItem(productId, color, size, quantity);
 			this.remoteCart.addItemToCart(item)
-				.then((itemData) =>
+				.then((cart) =>
 				{
+					const itemData = cart.items.filter(pItem => pItem.productId == productId)[0];
+
 					// Map dynamic data to the item
 					item.mapItemDataFromResponse(itemData);
 
-					// Add item or adjust quantity if exists
-					let similarItem = this.findSimilarItem(item);
-					if (similarItem !== -1) {
-						similarItem.item.adjustQuantity(quantity);
-					} else {
-						this.items.push(item);
-					}
-					this.recalculateSubtotal();
+					this.items = cart.items.map(i => {
+						const cartItem = new CartItem(i.productId, i.color.name, i.size, i.quantity);
+						cartItem.mapItemDataFromResponse(i);
+						return cartItem;
+					});
+
+					this.recalculateSubtotal(cart.subtotal);
 
 					resolve(item);
 
@@ -118,16 +116,18 @@ class Cart {
 		return new Promise((resolve, reject) =>
 		{
 			this.remoteCart.removeItemFromCart(search.item.hash, quantity)
-				.then(() =>
+				.then((cart) =>
 				{
-					let itemToBeRemoved = search.item;
-					// Deduct quantity, and remove if below 0
-					itemToBeRemoved.adjustQuantity(-1 * quantity);
+					const itemToBeRemoved = search.item;
 
-					if (itemToBeRemoved.getQuantity() <= 0) {
-						itemToBeRemoved = this.items.splice(search.index, 1);
-					}
-					this.recalculateSubtotal();
+					this.items = cart.items.map(i => {
+						const cartItem = new CartItem(i.productId, i.color.name, i.size, i.quantity);
+						cartItem.mapItemDataFromResponse(i);
+						return cartItem;
+					});
+
+					this.recalculateSubtotal(cart.subtotal);
+
 					resolve(itemToBeRemoved);
 
 				}).catch((errorMessage) =>
@@ -143,7 +143,9 @@ class Cart {
 	 */
 	getCheckoutUrl()
 	{
-		return this.checkoutUrl + '&token=' + this.token + '&affiliate_id=' + this.affiliateId + (Array.isArray(this.locationIds) ? this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '') : '');
+		var errorRedirectUrlParam = this.errorRedirectUrl ? '&errorRedirectUrl=' + encodeURIComponent(this.errorRedirectUrl) : '';
+
+		return this.checkoutUrl + '?token=' + this.token + '&affiliate_id=' + this.affiliateId + ((Array.isArray(this.locationIds) ? this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '') : '') + errorRedirectUrlParam);
 	}
 
 	/**
