@@ -40,7 +40,11 @@ const token = cookieManager.get(tokenCookieKey);
 // Base settings
 const baseUrl = settings.baseUrl.replace('http:', 'https:');
 const checkoutUrl = settings.baseUrl.replace('http:', 'https:') + '/api/basket/remote';
-const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), token);
+const remoteCart  = new RemoteCart(baseUrl.replace('http:', 'https:'), token, {
+	affiliateId: settings.affiliateId,
+	locationIds: settings.locationIds,
+	errorRedirectUrl: settings.errorRedirectUrl
+});
 
 // Fetch cart, and report back to the onready function
 remoteCart.getShoppingCart()
@@ -64,9 +68,7 @@ remoteCart.getShoppingCart()
 			});
 
 			// Create cart
-			let cart = new Cart(cartData.id, settings.affiliateId, settings.locationIds, remoteCart, items, checkoutUrl, {
-				errorRedirectUrl: settings.errorRedirectUrl,
-			});
+			let cart = new Cart(cartData.id, remoteCart, items, checkoutUrl);
 
 			// We're ready!!
 			window.miintoCartReady(cart);

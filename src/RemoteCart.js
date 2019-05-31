@@ -5,10 +5,13 @@ class RemoteCart {
 	 * @param http
 	 * @param token
 	 */
-	constructor(baseUrl, token)
+	constructor(baseUrl, token, settings)
 	{
 		this.baseUrl = baseUrl;
 		this.token   = token;
+		this.affiliateId = settings.affiliateId;
+		this.locationIds = settings.locationIds || [];
+		this.errorRedirectUrl = settings.errorRedirectUrl;
 	}
 
 	/**
@@ -27,7 +30,7 @@ class RemoteCart {
 	 */
 	getUrl(path)
 	{
-		let url = `${this.baseUrl}${path}`;
+		let url = `${this.baseUrl}${path}${this.getQueryParameters()}`;
 
 		return url;
 	}
@@ -42,6 +45,13 @@ class RemoteCart {
 		}
 
 		return headers;
+	}
+
+	getQueryParameters()
+	{
+		var errorRedirectUrlParam = this.errorRedirectUrl ? '&errorRedirectUrl=' + encodeURIComponent(this.errorRedirectUrl) : '';
+
+		return '?token=' + this.token + '&affiliate_id=' + this.affiliateId + ((Array.isArray(this.locationIds) ? this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '') : '') + errorRedirectUrlParam);
 	}
 
 	/**
