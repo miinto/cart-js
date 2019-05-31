@@ -10,14 +10,16 @@ class Cart {
 	 * @param items
 	 * @param checkoutUrl
 	 */
-	constructor(token, affiliateId, locationIds, remoteCart, items, checkoutUrl)
+	constructor(token, affiliateId, locationIds, remoteCart, items, checkoutUrl, config)
 	{
+		var cartConfig = config || {};
 		this.affiliateId = affiliateId;
 		this.locationIds = locationIds || [];
 		this.remoteCart  = remoteCart;
 		this.token       = token;
 		this.checkoutUrl = checkoutUrl;
 		this.subtotal    = 0;
+		this.errorRedirectUrl = cartConfig.errorRedirectUrl;
 
 		this.items = items || [];
 
@@ -141,7 +143,9 @@ class Cart {
 	 */
 	getCheckoutUrl()
 	{
-		return this.checkoutUrl + '?token=' + this.token + '&affiliate_id=' + this.affiliateId + (Array.isArray(this.locationIds) ? this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '') : '');
+		var errorRedirectUrlParam = this.errorRedirectUrl ? '&errorRedirectUrl=' + encodeURIComponent(this.errorRedirectUrl) : '';
+
+		return this.checkoutUrl + '?token=' + this.token + '&affiliate_id=' + this.affiliateId + ((Array.isArray(this.locationIds) ? this.locationIds.reduce((query, id) => query + '&locationIds[]=' + id, '') : '') + errorRedirectUrlParam);
 	}
 
 	/**
